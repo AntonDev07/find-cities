@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1 class="heading">Find cities in VietNam</h1>
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City in VietNam">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>in VietNam</li>
+    </ul>
+  </form>
+<script>
+
+  
+const endpointVN = "https://antondev07.github.io/apis/cities-in-vn.json";
+const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+  const cities = [];
+  
+
+  fetch(endpointVN)
+    .then(resolve => resolve.json())
+    .then(data => cities.push(...data));
+  
+  function findMatches(wordMatch, cities) {
+    return cities.filter(matched => {
+
+      // Here we need to figure out what city match our searched
+      const regex = new RegExp(wordMatch, 'gi');
+      return matched.city.match(regex);
+    })
+  }
+  function displayMatch() {
+    const matchArray = findMatches(this.value, cities);
+    const html = matchArray.map(place => {
+
+      const regex = new RegExp(this.value, 'gi');
+      const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+        return `
+        <li>
+            <span class="name">${cityName}</span>
+            <span class=population>${numberWithCommas(place.population)}</span>
+        </li>`;
+    }).join('');
+
+    suggestions.innerHTML = html;
+  
+  }
+
+  function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+  const searchInput = document.querySelector('.search');
+  const suggestions = document.querySelector('.suggestions');
+
+  searchInput.addEventListener('change', displayMatch);
+  searchInput.addEventListener('keyup', displayMatch);
+  
+
+
+</script>
+</body>
+</html>
+
